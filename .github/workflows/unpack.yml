@@ -5,7 +5,7 @@ name: Unpack ZIP into repository
   workflow_dispatch:
   push:
     paths:
-      - 'TibiaME_Assist_GitHub.zip'
+      -'TibiaME_Assist_GitHub.zip'
 
 permissions:
   contents: write

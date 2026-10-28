@@ -1,1 +1,36 @@
 
+name: Unpack ZIP into repository
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  unpack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Unpack project ZIP
+        run: |
+          ZIP_FILE=$(find . -maxdepth 1 -type f -name '*.zip' | head -n 1)
+          if [ -z "$ZIP_FILE" ]; then
+            echo "Nie znaleziono pliku ZIP w katalogu głównym."
+            exit 1
+          fi
+          unzip -o "$ZIP_FILE" -d extracted
+          cp -a extracted/. .
+          rm -rf extracted
+          rm -f "$ZIP_FILE"
+
+      - name: Commit extracted files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Extract project files from ZIP" || echo "No changes to commit"
+          git push
+
